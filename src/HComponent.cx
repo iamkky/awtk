@@ -1,0 +1,68 @@
+//HEADER(../awtk/HComponent.h, _HTE_HCOMPONENT_H_)
+#include <abd/new.h>
+#include <helium/He.h>
+
+//#define HCOMPONENT	struct HComponent_struct component
+
+Class(HComponent) {
+	void		(*add)(HComponent, HComponent);
+	He		(*render)(HComponent);
+	HComponent	child;
+	HComponent	last;
+	HComponent	next;
+};
+
+Constructor(HComponent);
+Destructor(HComponent);
+
+void hcomponentAddChild(HComponent self, HComponent child);
+
+He hcomponentRender(HComponent self);
+
+//ENDX
+
+Constructor(HComponent)
+{
+	CInit(HComponent);
+	
+	self->render = hcomponentRender;
+	self->add = hcomponentAddChild;
+	self->child = NULL;
+	self->next = NULL;
+	self->last = NULL;
+
+	return self;
+}
+
+Destructor(HComponent)
+{
+HComponent ch, ch_next;
+
+	if(!self) return;
+
+	for(ch=self->child; ch!=NULL; ch=ch_next){
+		ch_next = ch->next;
+		CFree(HComponent, ch);
+	}
+
+	free(self);
+}
+
+void hcomponentAddChild(HComponent self, HComponent child)
+{
+	if(nullAssert(self)) 	return;
+	if(nullAssert(child))	return;
+
+	if(self->child==NULL){
+		self->child = child;
+		self->last  = child;
+	}else{
+		self->last->next = child;
+		self->last       = child;
+	}
+}
+
+He hcomponentRender(HComponent self)
+{
+	return {% <div class="HComponent"> HComponent </div> %};
+}

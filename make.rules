@@ -1,0 +1,22 @@
+
+HEADERX=headerx
+
+.PHONY: all clean extractheaders ${DIRS}
+
+all:: extractheaders ${DIRS} ${OBJS} ${LIB}
+
+ifdef HEADEREXTRACTLIST
+extractheaders:
+	$(HEADERX) ${HEADEREXTRACTLIST}
+endif
+
+${LIB}:
+	${AR} rcs ${LIB} ${LIBOBJS}
+
+${DIRS}:
+	${MAKE} -C $@ $(MAKECMDGOALS)
+
+clean::
+	rm -f ${LIB} ${OBJS} ${CLEANLIST} 
+	for a in ${DIRS}; do ${MAKE} -C $$a clean; done
+
