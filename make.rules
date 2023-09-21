@@ -3,12 +3,14 @@ HEADERX=headerx
 
 .PHONY: all clean extractheaders ${DIRS}
 
-all:: extractheaders ${DIRS} ${OBJS} ${LIB}
+all:: extractheaders ${DIRS} ${OBJS} ${LIB} ${EXEC}
 
 ifdef HEADEREXTRACTLIST
 extractheaders:
 	$(HEADERX) ${HEADEREXTRACTLIST}
 endif
+
+${EXEC}: ${EXECOBJS}
 
 ${LIB}:
 	${AR} rcs ${LIB} ${LIBOBJS}

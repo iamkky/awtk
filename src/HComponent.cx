@@ -1,4 +1,4 @@
-//HEADER(../awtk/HComponent.h, _HTE_HCOMPONENT_H_)
+//HEADERX(../awtk/HComponent.h, _HTE_HCOMPONENT_H_)
 #include <abd/new.h>
 #include <helium/He.h>
 
