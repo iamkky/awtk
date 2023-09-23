@@ -21,6 +21,7 @@ int wasmApiInit()
 {
 	// useless number :-)
 	// means nothing
+	errLogf("wasmApiInit");
 	return 764;
 }
 
@@ -29,7 +30,7 @@ void render(void *state)
 StringBuffer	str;
 He	e;
 
-	str = StringBufferNew(200000);
+	str = StringBufferNew(2000);
 
         //memMonitor((char *)0x34dd0, 16);
 	errLogf("AppRender");
@@ -37,12 +38,11 @@ He	e;
 
         //memMonitor((char *)0x34dd0, 16);
 	errLogf("RenderJson");
-        //htElementRenderJson(e, 100000, str->buffer);
-        //////htElementRenderJson(e, str);
+	heRenderJson(e, str);
 
         //memMonitor((char *)0x34dd0, 16);
 	errLogf("htElementFree");
-	//////htElementFree(e);
+	heFree(e);
 
 	fbackRenderWasm(str);
 
