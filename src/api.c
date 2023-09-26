@@ -50,7 +50,7 @@ He	e;
 }
 
 wasmExport
-int globalHandler(int (*handler)(void *component, char *value), void *component, char *value)
+int globalHandler(int (*handler)(void *component, StringBuffer value), void *component, StringBuffer value)
 {
 int ret;
 
