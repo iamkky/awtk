@@ -90,7 +90,7 @@ StringBuffer StringBufferNew_(int initialSize)
 }
 
 wasmExport
-void stringBufferFree_(StringBuffer w)
+void StringBufferFree_(StringBuffer w)
 {
 	stringBufferFree(w);
 }
