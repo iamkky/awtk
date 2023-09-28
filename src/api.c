@@ -9,8 +9,10 @@
 extern He AppRender();
 
 // JS API
-extern void fbackRenderWasm(StringBuffer w);
+//extern void fbackRenderWasm(StringBuffer w);
 extern void wasmFetch__(StringBuffer st, void *component, int (*handler)(void *component, StringBuffer));
+
+static int (*globalHandlerHook)(int type, void *component, StringBuffer value);
 
 
 // Most of the functions here will be called by JS, end is not required by C code itself.
@@ -22,31 +24,13 @@ int wasmApiInit()
 	// useless number :-)
 	// means nothing
 	errLogf("wasmApiInit");
+	globalHandlerHook = NULL;
 	return 764;
 }
 
-void render(void *state)
+void awtkRegisterGlobalHandlerHook(int (*hook)(int type, void *component, StringBuffer value))
 {
-StringBuffer	str;
-He	e;
-
-	str = StringBufferNew(2000);
-
-        //memMonitor((char *)0x34dd0, 16);
-	errLogf("AppRender");
-	e = AppRender();
-
-        //memMonitor((char *)0x34dd0, 16);
-	errLogf("RenderJson");
-	heRenderJson(e, str);
-
-        //memMonitor((char *)0x34dd0, 16);
-	errLogf("htElementFree");
-	heFree(e);
-
-	fbackRenderWasm(str);
-
-	stringBufferFree(str);
+	globalHandlerHook = hook;
 }
 
 wasmExport
@@ -56,7 +40,7 @@ int ret;
 
 	if(handler==NULL) return -1;
 	ret = handler(component, value);
-	render(NULL);
+	if(globalHandlerHook) globalHandlerHook(AWTK_REGULAR_HANDLER, component, value);
 	return ret;
 }
 
@@ -67,7 +51,7 @@ int ret;
 
 	errLogf(sb->buffer);
 	ret = handler(component, sb);
-	render(NULL);
+	if(globalHandlerHook) globalHandlerHook(AWTK_FETCH_HANDLER, component, sb);
 	return ret;
 }
 
