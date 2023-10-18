@@ -1,5 +1,8 @@
 //HEADERX(../awtk/HComponent.h, _HTE_HCOMPONENT_H_)
 #include <abd/new.h>
+#include <abd/string.h>
+#include <abd/safe.h>
+#include <string.h>
 #include <helium/He.h>
 
 //#define HCOMPONENT	struct HComponent_struct component
@@ -7,6 +10,7 @@
 Class(HComponent) {
 	void		(*add)(HComponent, HComponent);
 	He		(*render)(HComponent);
+	char		*id;
 	HComponent	child;
 	HComponent	last;
 	HComponent	next;
@@ -15,11 +19,15 @@ Class(HComponent) {
 Constructor(HComponent);
 Destructor(HComponent);
 
+void hcomponentSetId(HComponent self, char *id);
+
 void hcomponentAddChild(HComponent self, HComponent child);
 
 He hcomponentRender(HComponent self);
 
 //ENDX
+
+int static HComponentGlobalCounter = 0;
 
 Constructor(HComponent)
 {
@@ -30,6 +38,8 @@ Constructor(HComponent)
 	self->child = NULL;
 	self->next = NULL;
 	self->last = NULL;
+
+	self->id = strf("HCompBuiltInId_%d", HComponentGlobalCounter++);
 
 	return self;
 }
@@ -48,6 +58,16 @@ HComponent ch, ch_next;
 	free(self);
 }
 
+void hcomponentSetId(HComponent self, char *id)
+{
+	if(nullAssert(self)) 	return;
+
+	if(self->id) free(self->id);
+	
+	self->id = id ? strdup(id) : NULL;
+}
+
+
 void hcomponentAddChild(HComponent self, HComponent child)
 {
 	if(nullAssert(self)) 	return;
@@ -64,5 +84,5 @@ void hcomponentAddChild(HComponent self, HComponent child)
 
 He hcomponentRender(HComponent self)
 {
-	return {% <div class="HComponent"> HComponent </div> %};
+	return {% <div class="HComponent" id={self->id}> HComponent </div> %};
 }
