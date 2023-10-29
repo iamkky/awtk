@@ -10,6 +10,6 @@ void	wasmFetch(const char *url, void *component, int (*handler)(void *component,
 void	awtkRegisterGlobalHandlerHook(int (*hook)(int type, void *component, StringBuffer value));
 int	wasmApiInit();
 
-extern void fbackRenderWasm(StringBuffer w);
+extern void fbackRenderWasm(StringBuffer id, StringBuffer str);
 
 #endif
