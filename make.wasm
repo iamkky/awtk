@@ -22,4 +22,3 @@ ifeq ($(WASM),yes)
 	WASMLDFLAGS=-L$(WASI_SYSROOT)/lib/wasm32-wasi --allow-undefined --import-memory --export-dynamic --no-entry -lc
 	LDFLAGS+=-nostartfiles
 endif
-

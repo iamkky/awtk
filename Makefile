@@ -1,3 +1,4 @@
+export WASM=yes
 
 LIB=libawtk.a
 DIRS=src

@@ -2,17 +2,18 @@
 #include <string.h>
 #include <abd/StringBuffer.h>
 #include <abd/errLog.h>
-#include <helium/He.h>
+//#include <helium/He.h>
 
 #include <awtk/api.h>
 
-extern He AppRender();
+//extern He AppRender();
 
 // JS API
 //extern void fbackRenderWasm(StringBuffer w);
 extern void wasmFetch__(StringBuffer st, void *component, int (*handler)(void *component, StringBuffer));
 
-static int (*globalHandlerHook)(int type, void *component, StringBuffer value);
+//static int (*globalHandlerHook)(int type, void *component, StringBuffer value);
+static eventHandlerHook_t *globalHandlerHook;
 
 
 // Most of the functions here will be called by JS, end is not required by C code itself.
@@ -28,19 +29,21 @@ int wasmApiInit()
 	return 764;
 }
 
-void awtkRegisterGlobalHandlerHook(int (*hook)(int type, void *component, StringBuffer value))
+//void awtkRegisterGlobalHandlerHook(int (*hook)(int type, void *component, StringBuffer value))
+void awtkRegisterGlobalHandlerHook(eventHandlerHook_t *hook)
 {
 	globalHandlerHook = hook;
 }
 
 wasmExport
-int globalHandler(int (*handler)(void *component, StringBuffer value), void *component, StringBuffer value)
+//int globalHandler(int (*handler)(void *component, StringBuffer value), void *component, StringBuffer value)
+int globalHandler_(StringBuffer type, HEventHandler_t handler, void *component, StringBuffer value)
 {
 int ret;
 
 	if(handler==NULL) return -1;
-	ret = handler(component, value);
-	if(globalHandlerHook) globalHandlerHook(AWTK_REGULAR_HANDLER, component, value);
+	ret = handler(type, component, value);
+	if(globalHandlerHook) globalHandlerHook(AWTK_REGULAR_HANDLER, type, component, value);
 	return ret;
 }
 
@@ -51,7 +54,7 @@ int ret;
 
 	errLogf(sb->buffer);
 	ret = handler(component, sb);
-	if(globalHandlerHook) globalHandlerHook(AWTK_FETCH_HANDLER, component, sb);
+	if(globalHandlerHook) globalHandlerHook(AWTK_FETCH_HANDLER, NULL, component, sb);
 	return ret;
 }
 
@@ -70,18 +73,24 @@ void wasmFetch(const char *url, void *component, int (*handler)(void *component,
 wasmExport
 StringBuffer StringBufferNew_(int initialSize)
 {
-	return StringBufferNew(initialSize);
+StringBuffer sb;
+
+	sb = StringBufferNew(initialSize);
+	//errLogf("String Buffer new : %p %d", sb, initialSize);
+	return sb;
 }
 
 wasmExport
 void stringBufferFree_(StringBuffer w)
 {
+	//errLogf("String Buffer free: %p", w);
 	stringBufferFree(w);
 }
 
 wasmExport
 void stringBufferHardsetLength_(StringBuffer self, int len)
 {
+	//errLogf("String Buffer hardset: %d", len);
 	stringBufferHardsetLength(self, len);
 }
 
