@@ -24,7 +24,7 @@ char *hcomponentGetId(HComponent self);
 
 void hcomponentAddChild(HComponent self, HComponent child);
 
-He hcomponentRender(HComponent self);
+He   hcomponentRender(HComponent self);
 
 //ENDX
 
@@ -39,8 +39,9 @@ Constructor(HComponent)
 	self->child = NULL;
 	self->next = NULL;
 	self->last = NULL;
+	self->id = NULL;
 
-	self->id = strf("HCompBuiltInId_%d", HComponentGlobalCounter++);
+	//self->id = strf("HCompBuiltInId_%d", HComponentGlobalCounter++);
 
 	return self;
 }
@@ -49,7 +50,7 @@ Destructor(HComponent)
 {
 HComponent ch, ch_next;
 
-	if(!self) return;
+	if(nullAssert(self)) 	return;
 
 	for(ch=self->child; ch!=NULL; ch=ch_next){
 		ch_next = ch->next;
@@ -93,5 +94,15 @@ void hcomponentAddChild(HComponent self, HComponent child)
 
 He hcomponentRender(HComponent self)
 {
-	return {% <div class="HComponent" id={self->id}> HComponent </div> %};
+He content;
+
+	if(nullAssert(self)) return {% <div class="HComponent"> </div> %};
+
+	if(self->render){
+		content = self->render(self);
+	}else{
+		content = {% Hcomponent %};
+	}
+		
+	return {% <div class="HComponent" id={self->id}> [content] </div> %};
 }
