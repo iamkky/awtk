@@ -6,21 +6,25 @@
 #include <helium/He.h>
 
 //#define HCOMPONENT	struct HComponent_struct component
+#include <abjson/json.h>
 
 Class(HComponent) {
 	void		(*add)(HComponent, HComponent);
 	He		(*render)(HComponent);
 	char		*id;
+	JsonValue	attributes;
 	HComponent	child;
 	HComponent	last;
 	HComponent	next;
 };
 
-Constructor(HComponent);
+Constructor(HComponent, JsonValue attributes);
 Destructor(HComponent);
 
 void hcomponentSetId(HComponent self, char *id);
 char *hcomponentGetId(HComponent self);
+
+char *hcomponentGetAttributeAsString(HComponent self, char *key);
 
 void hcomponentAddChild(HComponent self, HComponent child);
 
@@ -30,16 +34,18 @@ He   hcomponentRender(HComponent self);
 
 int static HComponentGlobalCounter = 0;
 
-Constructor(HComponent)
+Constructor(HComponent, JsonValue attributes)
 {
 	CInit(HComponent);
 	
 	self->render = hcomponentRender;
 	self->add = hcomponentAddChild;
+
+	self->id = NULL;
+	self->attributes = attributes;
 	self->child = NULL;
 	self->next = NULL;
 	self->last = NULL;
-	self->id = NULL;
 
 	//self->id = strf("HCompBuiltInId_%d", HComponentGlobalCounter++);
 
@@ -50,7 +56,7 @@ Destructor(HComponent)
 {
 HComponent ch, ch_next;
 
-	if(nullAssert(self)) 	return;
+	if(nullAssert(self)) return;
 
 	for(ch=self->child; ch!=NULL; ch=ch_next){
 		ch_next = ch->next;
@@ -62,7 +68,7 @@ HComponent ch, ch_next;
 
 void hcomponentSetId(HComponent self, char *id)
 {
-	if(nullAssert(self)) 	return;
+	if(nullAssert(self)) return;
 
 	if(self->id) free(self->id);
 	
@@ -72,16 +78,37 @@ void hcomponentSetId(HComponent self, char *id)
 
 char *hcomponentGetId(HComponent self)
 {
-	if(nullAssert(self)) 	return NULL;
+	if(nullAssert(self)) return NULL;
 
 	return self->id;
+}
+
+char *hcomponentGetAttributeAsString(HComponent self, char *key)
+{
+JsonValue	attr;
+char		*value_as_string;
+
+	if(nullAssert(self)) return NULL;
+	if(nullAssert(key)) return NULL;
+
+	if(self->attributes==NULL) return NULL;
+
+	errLogf("YYYYYYY %S", key);
+	errLogf("YYYYYYY %S", jsonValueGetAsString(self->attributes));
+	attr = jsonValueGet_k(self->attributes, key);
+
+	errLogf("ZZZZZZZ %S", jsonValueGetAsString(attr));
+
+	if(attr==NULL) return NULL;
+
+	return jsonValueGetAsString(attr);
 }
 
 
 void hcomponentAddChild(HComponent self, HComponent child)
 {
-	if(nullAssert(self)) 	return;
-	if(nullAssert(child))	return;
+	if(nullAssert(self)) return;
+	if(nullAssert(child)) return;
 
 	if(self->child==NULL){
 		self->child = child;
