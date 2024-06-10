@@ -93,11 +93,7 @@ char		*value_as_string;
 
 	if(self->attributes==NULL) return NULL;
 
-	errLogf("YYYYYYY %S", key);
-	errLogf("YYYYYYY %S", jsonValueGetAsString(self->attributes));
 	attr = jsonValueGet_k(self->attributes, key);
-
-	errLogf("ZZZZZZZ %S", jsonValueGetAsString(attr));
 
 	if(attr==NULL) return NULL;
 

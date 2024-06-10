@@ -52,7 +52,7 @@ int globalFetchHandler2(StringBuffer sb, void *component, int (*handler)(void *c
 {
 int ret;
 
-	errLogf(sb->buffer);
+	errLogf(stringBufferGetBuffer(sb));
 	ret = handler(component, sb);
 	if(globalHandlerHook) globalHandlerHook(AWTK_FETCH_HANDLER, NULL, component, sb);
 	return ret;
