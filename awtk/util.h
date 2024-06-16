@@ -2,8 +2,8 @@
 #define _AWTK_UTIL_H_
 
 #include <abd/StringBuffer.h>
-#include <abjson/json.h>
+#include <abd/AData.c.h>
 
-JsonValue awtkParsesJson(StringBuffer json);
+AData awtkParsesJson(StringBuffer json);
 
 #endif

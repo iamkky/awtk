@@ -6,19 +6,19 @@
 #include <helium/He.h>
 
 //#define HCOMPONENT	struct HComponent_struct component
-#include <abjson/json.h>
+#include <abd/AData.c.h>
 
 Class(HComponent) {
 	void		(*add)(HComponent, HComponent);
 	He		(*render)(HComponent);
 	char		*id;
-	JsonValue	attributes;
+	AData		attributes;
 	HComponent	child;
 	HComponent	last;
 	HComponent	next;
 };
 
-Constructor(HComponent, JsonValue attributes);
+Constructor(HComponent, AData attributes);
 Destructor(HComponent);
 
 void hcomponentSetId(HComponent self, char *id);
@@ -34,7 +34,7 @@ He   hcomponentRender(HComponent self);
 
 int static HComponentGlobalCounter = 0;
 
-Constructor(HComponent, JsonValue attributes)
+Constructor(HComponent, AData attributes)
 {
 	CInit(HComponent);
 	
@@ -85,19 +85,19 @@ char *hcomponentGetId(HComponent self)
 
 char *hcomponentGetAttributeAsString(HComponent self, char *key)
 {
-JsonValue	attr;
-char		*value_as_string;
+AData	attr;
+char	*value_as_string;
 
 	if(nullAssert(self)) return NULL;
 	if(nullAssert(key)) return NULL;
 
 	if(self->attributes==NULL) return NULL;
 
-	attr = jsonValueGet_k(self->attributes, key);
+	attr = aDataGet_k(self->attributes, key);
 
 	if(attr==NULL) return NULL;
 
-	return jsonValueGetAsString(attr);
+	return aDataGetAsString(attr);
 }
 
 

@@ -3,17 +3,16 @@
 #include <abd/StringBuffer.h>
 #include <abjson/json.h>
 
-JsonValue awtkParsesJson(StringBuffer json)
+AData awtkParsesJson(StringBuffer json)
 {
 JsonParser	parser;
-JsonValue	value;
+AData		value;
 int		lcount, result;
 
 	if(nullAssert(json)) return NULL;
-
 	if(nullAssert(json->buffer)) return NULL;
 
-	parser = JsonParserNew(json->buffer, &lcount);
+	parser = JsonParserNew(stringBufferGetBuffer(json), &lcount);
 
 	lcount = 0;
 	result = JsonParserParse(parser);
