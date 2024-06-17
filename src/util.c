@@ -1,9 +1,9 @@
 #include <abd/new.h>
 #include <abd/errLog.h>
-#include <abd/StringBuffer.h>
+#include <abd/AString.c.h>
 #include <abjson/json.h>
 
-AData awtkParsesJson(StringBuffer json)
+AData awtkParsesJson(AString json)
 {
 JsonParser	parser;
 AData		value;
@@ -12,7 +12,7 @@ int		lcount, result;
 	if(nullAssert(json)) return NULL;
 	if(nullAssert(json->buffer)) return NULL;
 
-	parser = JsonParserNew(stringBufferGetBuffer(json), &lcount);
+	parser = JsonParserNew(aStringGetBuffer(json), &lcount);
 
 	lcount = 0;
 	result = JsonParserParse(parser);
